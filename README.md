@@ -3,7 +3,7 @@
 Personal portfolio of **Sandeep Kumar K**, an Embedded Engineer working on firmware, board bring-up, BLE Audio and Auracast.
 It is a hand-written static website with no framework, no build step and no dependencies to install.
 
-**Live site:** https://sandeepkumark1028.vercel.app
+**Live site:** https://sandeepkportfolio.vercel.app
 
 ---
 
@@ -100,8 +100,8 @@ Files that are intentionally **not** committed:
 No install is needed. Any static file server works.
 
 ```bash
-git clone https://github.com/sandeepkumark1028/sandeepkumark1028.github.io.git
-cd sandeepkumark1028.github.io
+git clone https://github.com/sandeepkumark1028/sandeepkumark1028.vercel.app.git
+cd sandeepkumark1028.vercel.app
 
 # pick one
 python3 -m http.server 8000
