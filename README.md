@@ -14,7 +14,7 @@ It is a hand-written static website with no framework, no build step and no depe
 3. [Repository structure](#repository-structure)
 4. [Run it locally](#run-it-locally)
 5. [How to edit content](#how-to-edit-content)
-6. [Access gate and approval flow](#access-gate-and-approval-flow)
+6. [Apps Script backend](#apps-script-backend)
 7. [Contact form](#contact-form)
 8. [Deployment](#deployment)
 9. [Resume](#resume)
@@ -56,7 +56,6 @@ Project pages share `projects/project.css` and `projects/project.js`.
 - Dark, amber-accented PCB and circuit design with animated reveals
 - Right-aligned navigation that hides on scroll down and returns on scroll up
 - "On this page" table of contents on project pages that tracks your position
-- Access gate for the sections below Home (see below)
 - Works on phones, tablets and desktop
 - Respects the `prefers-reduced-motion` setting
 
@@ -67,7 +66,7 @@ Project pages share `projects/project.css` and `projects/project.js`.
 - **HTML, CSS and vanilla JavaScript.** One self-contained file per page, with styles and scripts inline in `index.html`.
 - **Fonts:** Space Grotesk, IBM Plex Sans and JetBrains Mono from Google Fonts.
 - **Hosting:** Vercel (primary) and GitHub Pages.
-- **Backend for the access gate and contact form:** a Google Apps Script web app that stores requests in a Google Sheet and sends the emails.
+- **Backend for the contact form:** a Google Apps Script web app that sends the emails.
 
 ---
 
@@ -76,8 +75,7 @@ Project pages share `projects/project.css` and `projects/project.js`.
 ```
 .
 ├── index.html                  Main one-page site (styles and scripts inline)
-├── approve.html                Page you open from the approval email to approve or deny a request
-├── gate.js                     Access gate and the shared send function for the contact form
+├── contact.js                  Shared send function for the contact form
 ├── photo.jpg                   Profile photo used in the About section
 ├── Sandeep_Kumar_K_Resume.pdf  Resume served by the Download Resume button
 ├── logos/                      Company and college logos (Factana, MVJ, OpenEcore, Pi Square, ...)
@@ -123,8 +121,8 @@ You can also open `index.html` directly in a browser. A local server is better, 
 | Bio, experience bullets, skills, hero text | `index.html` |
 | A project's details | the matching file in `projects/` |
 | Colors, fonts, spacing on project pages | `projects/project.css` |
-| Contact email shown on the site | search for the address in `index.html`, `gate.js` and `projects/*.html` |
-| GitHub and LinkedIn links | `index.html` (hero icons and the Contact section) and `gate.js` |
+| Contact email shown on the site | search for the address in `index.html`, `contact.js` and `projects/*.html` |
+| GitHub and LinkedIn links | `index.html` (hero icons and the Contact section) |
 | Resume | replace `Sandeep_Kumar_K_Resume.pdf` |
 | Profile photo | replace `photo.jpg` |
 
@@ -138,29 +136,15 @@ git push
 
 ---
 
-## Access gate and approval flow
+## Apps Script backend
 
-The page below the Home section is protected by a courtesy access gate (`gate.js`).
-
-1. A visitor sees only the Home section and an access panel.
-2. They send a request with their name, email and a reason. The request goes to the Apps Script web app, which saves it in a Google Sheet and emails the owner.
-3. The owner opens the email and clicks the review button, which opens `approve.html`. The page shows the request, and the owner can approve or deny it.
-4. On approval the visitor is emailed a personal link ending in `?access=TOKEN`.
-5. Opening the link unlocks the site. The token is saved in the browser and re-checked on later visits, so access can expire (30 days by default) or be revoked by setting the row's status to `Revoked` in the sheet.
-6. A shared access code can also unlock the site. The code is compared by hash in the browser.
-
-> **This is a courtesy gate, not security.** The page content is still delivered to the browser. Do not put anything confidential in this site.
-
-Access is remembered per website address. Anyone approved on a different address must request access again.
-
-### Apps Script settings
+The contact form sends messages through a Google Apps Script web app.
 
 The backend code lives outside this repository. When you deploy or update it:
 
 - **Execute as:** Me
 - **Who has access:** Anyone
-- In its `CONFIG`, `SITE_URL` must be the live site address, because the emailed links are built from it.
-- After editing the script, publish it with **Deploy → Manage deployments → ✏️ Edit → New version → Deploy**. Editing the existing deployment keeps the same `/exec` link. Creating a **New deployment** makes a new link, which must then be copied into `gate.js` and `approve.html`.
+- After editing the script, publish it with **Deploy → Manage deployments → ✏️ Edit → New version → Deploy**. Editing the existing deployment keeps the same `/exec` link. Creating a **New deployment** makes a new link, which must then be copied into `contact.js`.
 
 ---
 
@@ -168,9 +152,9 @@ The backend code lives outside this repository. When you deploy or update it:
 
 The Contact section has a standard form with name, email, optional subject and message.
 
-- It validates the fields, then sends them to the Apps Script web app (`window.skSend`, defined in `gate.js`).
+- It validates the fields, then sends them to the Apps Script web app (`window.skSend`, defined in `contact.js`).
 - If sending fails, the page shows a link that opens the visitor's mail app with the message already filled in.
-- Spam protection: a hidden honeypot field in the access form, and rate limits in the script.
+- Spam protection: rate limits in the script.
 
 ---
 
